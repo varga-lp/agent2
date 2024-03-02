@@ -4,7 +4,7 @@ The simplest agent library.
 
 Properties
 
-- indicators
+- indicators (bbs, rsis)
   - activation period
 - take profit
 - stop loss
