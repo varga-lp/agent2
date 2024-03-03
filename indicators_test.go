@@ -78,37 +78,6 @@ func TestRandBB_AssignsAllBBLines(t *testing.T) {
 	}
 }
 
-func TestBB_Marshal(t *testing.T) {
-	bb := RandomBB()
-
-	b, err := bb.Marshal()
-	if err != nil {
-		t.Errorf("unexpected marshaling error %s", err.Error())
-	}
-
-	expected := 92
-	if len(b) != expected {
-		t.Errorf("expected %d, received %d", expected, len(b))
-	}
-}
-
-func TestBB_UnMarshal(t *testing.T) {
-	bb := RandomBB()
-	pload, _ := bb.Marshal()
-
-	bb2, err := UnMarshalBB(pload)
-	if err != nil {
-		t.Errorf("error %s not expected", err.Error())
-	}
-
-	if bb2.Mon != bb.Mon {
-		t.Errorf("mons are not unmarshaled correctly %v, %v", bb2.Mon, bb.Mon)
-	}
-	if bb2.Multiplier != bb.Multiplier {
-		t.Errorf("multipliers are not unmarshalled correctly %f, %f", bb2.Multiplier, bb.Multiplier)
-	}
-}
-
 func TestKTMV_InvalidKlns1Len(t *testing.T) {
 	klns1 := make([]klines.Kline, 10)
 	klns2 := make([]klines.Kline, 20)
@@ -582,6 +551,167 @@ func TestBB_BelowUpper_False(t *testing.T) {
 	}
 
 	expected := false
+	if act != expected {
+		t.Errorf("expected %v as active, returned %v", expected, act)
+	}
+}
+
+func TestRandTargetVal(t *testing.T) {
+	for i := 0; i < 10_000; i++ {
+		tval := randTargetVal()
+
+		if tval < float64(minTVal) || tval > float64(maxTVal) {
+			t.Errorf("tval %.2f is beyond limits", tval)
+		}
+	}
+}
+
+func TestRandTargetValSingleIteration(t *testing.T) {
+	rand.Seed(0)
+
+	tval := randTargetVal()
+	expected := 59.0
+	if tval != expected {
+		t.Errorf("tval %.2f is not equal to expected tval %.2f", tval, expected)
+	}
+}
+
+func TestRandRSI_AssignsBothValPos(t *testing.T) {
+	count := 0
+	for _, valPos := range []ValuePos{Above, Below} {
+		for {
+			bb := RandomRSI()
+			if bb.ValuePos == valPos {
+				count++
+				break
+			}
+		}
+	}
+	if count != 2 {
+		t.Errorf("not all valPos assinged randomly")
+	}
+}
+
+func TestCalcRSI_With0LenVals(t *testing.T) {
+	_, err := calcRsi(make([]float64, 0))
+	if err == nil {
+		t.Errorf("expected error but nothing raised")
+	}
+}
+
+func TestCalcRSI_With1LenVals(t *testing.T) {
+	_, err := calcRsi([]float64{1})
+	if err == nil {
+		t.Errorf("expected error but nothing raised")
+	}
+}
+
+func TestCalcRSI_Expecting50(t *testing.T) {
+	r, err := calcRsi([]float64{1, 2, 3, 2, 1})
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := 50.0
+	if r != expected {
+		t.Errorf("expected %.2f but returned %.2f", expected, r)
+	}
+}
+
+func TestCalcRSI_Expecting75(t *testing.T) {
+	r, err := calcRsi([]float64{1, 2, 3, 4, 3})
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := 75.0
+	if r != expected {
+		t.Errorf("expected %.2f but returned %.2f", expected, r)
+	}
+}
+
+func TestCalcRSI_Expecting25(t *testing.T) {
+	r, err := calcRsi([]float64{5, 4, 3, 2, 3})
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := 25.0
+	if r != expected {
+		t.Errorf("expected %.2f but returned %.2f", expected, r)
+	}
+}
+
+func TestRSI_Active_Above(t *testing.T) {
+	rsi := &RSI{
+		Mon:       Close1,
+		ValuePos:  Above,
+		TargetVal: 49,
+		Period:    6,
+	}
+
+	klns1, klns2 := dummyKlines(6), dummyKlines(6)
+	for i := 0; i < 6; i++ {
+		klns1[i].Close = float64(i)
+	}
+
+	act, err := rsi.Active(klns1, klns2)
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := true
+	if act != expected {
+		t.Errorf("expected %v as active, returned %v", expected, act)
+	}
+}
+
+func TestRSI_Active_Below(t *testing.T) {
+	rsi := &RSI{
+		Mon:       Close1,
+		ValuePos:  Below,
+		TargetVal: 50,
+		Period:    6,
+	}
+
+	klns1, klns2 := dummyKlines(6), dummyKlines(6)
+	for i := 0; i < 6; i++ {
+		klns1[i].Close = float64(i)
+	}
+
+	act, err := rsi.Active(klns1, klns2)
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := false
+	if act != expected {
+		t.Errorf("expected %v as active, returned %v", expected, act)
+	}
+}
+
+func TestRSI_Active_Below_True(t *testing.T) {
+	rsi := &RSI{
+		Mon:       Close1,
+		ValuePos:  Below,
+		TargetVal: 51,
+		Period:    6,
+	}
+
+	klns1, klns2 := dummyKlines(6), dummyKlines(6)
+	for i := 0; i < 6; i++ {
+		klns1[i].Close = float64(i)
+	}
+	klns1[3].Close = 2
+	klns1[4].Close = 1
+	klns1[5].Close = 0
+
+	act, err := rsi.Active(klns1, klns2)
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := true
 	if act != expected {
 		t.Errorf("expected %v as active, returned %v", expected, act)
 	}

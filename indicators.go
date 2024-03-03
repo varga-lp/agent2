@@ -1,8 +1,6 @@
 package agent2
 
 import (
-	"bytes"
-	"encoding/gob"
 	"fmt"
 	"math"
 	"math/rand"
@@ -66,26 +64,6 @@ func RandomBB() *BB {
 		Period:     randPeriod(),
 		Multiplier: randMultiplier(),
 	}
-}
-
-func (bb *BB) Marshal() ([]byte, error) {
-	var buf bytes.Buffer
-
-	encoder := gob.NewEncoder(&buf)
-	if err := encoder.Encode(bb); err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func UnMarshalBB(pload []byte) (*BB, error) {
-	res := &BB{}
-
-	decoder := gob.NewDecoder(bytes.NewReader(pload))
-	if err := decoder.Decode(res); err != nil {
-		return nil, err
-	}
-	return res, nil
 }
 
 const (
@@ -212,6 +190,75 @@ func (bb *BB) Active(klns1 []klines.Kline, klns2 []klines.Kline) (bool, error) {
 		}
 	default:
 		return false, fmt.Errorf("bbline %d is not defined", bb.Line)
+	}
+	return false, nil
+}
+
+const (
+	minTVal = 5
+	maxTVal = 95
+)
+
+type RSI struct {
+	Mon       Monitor
+	ValuePos  ValuePos
+	TargetVal float64
+	Period    int
+}
+
+func randTargetVal() float64 {
+	tval := minTVal + rand.Intn(maxTVal-minTVal)
+
+	return float64(tval)
+}
+
+func RandomRSI() *RSI {
+	return &RSI{
+		Mon:       randMon(),
+		ValuePos:  ValuePos(rand.Intn(2)),
+		TargetVal: randTargetVal(),
+		Period:    randPeriod(),
+	}
+}
+
+func calcRsi(values []float64) (float64, error) {
+	if len(values) < 2 {
+		return 0, fmt.Errorf("needs min 2 elements to calculate rsi")
+	}
+
+	var gains, losses float64
+	for i := 1; i < len(values); i++ {
+		diff := values[i] - values[i-1]
+		if diff > 0 {
+			gains += diff
+		} else {
+			losses -= diff
+		}
+	}
+	if losses == 0 {
+		return 100, nil
+	}
+	return 100 - (100 / (1 + (gains / losses))), nil
+}
+
+func (rsi *RSI) Active(klns1 []klines.Kline, klns2 []klines.Kline) (bool, error) {
+	vals, err := klinesToMonValues(rsi.Mon, rsi.Period, klns1, klns2)
+	if err != nil {
+		return false, err
+	}
+
+	r, err := calcRsi(vals)
+	if err != nil {
+		return false, err
+	}
+
+	switch rsi.ValuePos {
+	case Above:
+		return r > rsi.TargetVal, nil
+	case Below:
+		return r < rsi.TargetVal, nil
+	default:
+		return false, fmt.Errorf("valuePos %v is not defined", rsi.ValuePos)
 	}
 	return false, nil
 }
