@@ -716,3 +716,29 @@ func TestRSI_Active_Below_True(t *testing.T) {
 		t.Errorf("expected %v as active, returned %v", expected, act)
 	}
 }
+
+var (
+	benchmarkKlns []klines.Kline
+)
+
+func init() {
+	benchmarkKlns = dummyKlines(250)
+}
+
+func Benchmark_BB(b *testing.B) {
+	bb := RandomBB()
+	bb.Period = 250
+
+	for i := 0; i < b.N; i++ {
+		bb.Active(benchmarkKlns, benchmarkKlns)
+	}
+}
+
+func Benchmark_RSI(b *testing.B) {
+	rsi := RandomRSI()
+	rsi.Period = 250
+
+	for i := 0; i < b.N; i++ {
+		rsi.Active(benchmarkKlns, benchmarkKlns)
+	}
+}
