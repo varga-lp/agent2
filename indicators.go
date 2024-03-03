@@ -147,3 +147,71 @@ func klinesToMonValues(mon Monitor, period int, klns1 []klines.Kline,
 	}
 	return res, nil
 }
+
+func mean(vals []float64) (float64, error) {
+	vlen := len(vals)
+	if vlen == 0 {
+		return 0, fmt.Errorf("vals len 0, can't take mean")
+	}
+
+	sum := 0.0
+	for _, v := range vals {
+		sum += v
+	}
+	return sum / float64(len(vals)), nil
+}
+
+func stddev(vals []float64, mean float64) (float64, error) {
+	vlen := len(vals)
+	if vlen == 0 {
+		return 0, fmt.Errorf("vals len 0, can't take stddev")
+	}
+
+	sumOfSquaredDiffs := 0.0
+	for _, v := range vals {
+		sumOfSquaredDiffs += (v - mean) * (v - mean)
+	}
+	variance := sumOfSquaredDiffs / float64(len(vals))
+	return math.Sqrt(variance), nil
+}
+
+func (bb *BB) Active(klns1 []klines.Kline, klns2 []klines.Kline) (bool, error) {
+	vals, err := klinesToMonValues(bb.Mon, bb.Period, klns1, klns2)
+	if err != nil {
+		return false, err
+	}
+
+	mn, err := mean(vals)
+	if err != nil {
+		return false, err
+	}
+	std, err := stddev(vals, mn)
+	if err != nil {
+		return false, err
+	}
+
+	lastVal := vals[len(vals)-1]
+	switch bb.Line {
+	case Lower:
+		if bb.ValuePos == Above {
+			return lastVal > (mn - bb.Multiplier*std), nil
+		} else if bb.ValuePos == Below {
+			return lastVal < (mn - bb.Multiplier*std), nil
+		}
+	case Middle:
+		if bb.ValuePos == Above {
+			return lastVal > mn, nil
+		} else if bb.ValuePos == Below {
+			return lastVal < mn, nil
+		}
+	case Upper:
+		if bb.ValuePos == Above {
+			return lastVal > (mn + bb.Multiplier*std), nil
+		} else if bb.ValuePos == Below {
+			return lastVal < (mn + bb.Multiplier*std), nil
+		}
+	default:
+		return false, fmt.Errorf("bbline %d is not defined", bb.Line)
+	}
+	return false, nil
+}

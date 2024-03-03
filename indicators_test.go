@@ -364,3 +364,225 @@ func TestKTMV_ReturnsExpectedNotRs(t *testing.T) {
 		}
 	}
 }
+
+func TestMean_RaiseOn0LenVals(t *testing.T) {
+	vals := make([]float64, 0)
+
+	_, err := mean(vals)
+	if err == nil {
+		t.Errorf("expected error nothing raised")
+	}
+}
+
+func TestMean_ReturnsMeanAsExpected(t *testing.T) {
+	vals := []float64{0, 1, 2, 3, 4, 5}
+
+	m, err := mean(vals)
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+	expected := 2.5
+
+	if m != expected {
+		t.Errorf("expected %.2f as mean, returned %.2f", expected, m)
+	}
+}
+
+func TestStddev_RaiseOn0LenVals(t *testing.T) {
+	vals := make([]float64, 0)
+
+	_, err := stddev(vals, 0.0)
+	if err == nil {
+		t.Errorf("expected error nothing raised")
+	}
+}
+
+func TestStddev_ReturnsStddevAsExpected(t *testing.T) {
+	vals := []float64{0, 1, 2, 3, 4, 5}
+
+	m, err := stddev(vals, 2.5)
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+	expected := 1.7078
+
+	if math.Round(m*10_000.0)/10_000.0 != expected {
+		t.Errorf("expected %.4f as mean, returned %.4f", expected, m)
+	}
+}
+
+func TestBB_AboveLower_True(t *testing.T) {
+	bb := &BB{
+		Mon:        Close1,
+		ValuePos:   Above,
+		Line:       Lower,
+		Period:     6,
+		Multiplier: 2,
+	}
+
+	klns1, klns2 := dummyKlines(6), dummyKlines(6)
+	for i := 0; i < 6; i++ {
+		klns1[i].Close = float64(i)
+	}
+
+	act, err := bb.Active(klns1, klns2)
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := true
+	if act != expected {
+		t.Errorf("expected %v as active, returned %v", expected, act)
+	}
+}
+
+func TestBB_BelowLower_True(t *testing.T) {
+	bb := &BB{
+		Mon:        Close1,
+		ValuePos:   Below,
+		Line:       Lower,
+		Period:     6,
+		Multiplier: 1,
+	}
+
+	klns1, klns2 := dummyKlines(6), dummyKlines(6)
+	klns1[5].Close = 1.0
+
+	act, err := bb.Active(klns1, klns2)
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := true
+	if act != expected {
+		t.Errorf("expected %v as active, returned %v", expected, act)
+	}
+}
+
+func TestBB_AboveMiddle_True(t *testing.T) {
+	bb := &BB{
+		Mon:        Close1,
+		ValuePos:   Above,
+		Line:       Middle,
+		Period:     6,
+		Multiplier: 2,
+	}
+
+	klns1, klns2 := dummyKlines(6), dummyKlines(6)
+	for i := 0; i < 6; i++ {
+		klns1[i].Close = float64(i)
+	}
+
+	act, err := bb.Active(klns1, klns2)
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := true
+	if act != expected {
+		t.Errorf("expected %v as active, returned %v", expected, act)
+	}
+}
+
+func TestBB_BelowMiddle_True(t *testing.T) {
+	bb := &BB{
+		Mon:        Close1,
+		ValuePos:   Below,
+		Line:       Middle,
+		Period:     6,
+		Multiplier: 2,
+	}
+
+	klns1, klns2 := dummyKlines(6), dummyKlines(6)
+	for i := 0; i < 6; i++ {
+		klns1[i].Close = float64(i)
+	}
+	klns1[5].Close = 1.0
+
+	act, err := bb.Active(klns1, klns2)
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := true
+	if act != expected {
+		t.Errorf("expected %v as active, returned %v", expected, act)
+	}
+}
+
+func TestBB_AboveUpper_True(t *testing.T) {
+	bb := &BB{
+		Mon:        Close1,
+		ValuePos:   Above,
+		Line:       Upper,
+		Period:     6,
+		Multiplier: 2,
+	}
+
+	klns1, klns2 := dummyKlines(6), dummyKlines(6)
+	for i := 0; i < 6; i++ {
+		klns1[i].Close = float64(i)
+	}
+	klns1[5].Close = 25.0
+
+	act, err := bb.Active(klns1, klns2)
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := true
+	if act != expected {
+		t.Errorf("expected %v as active, returned %v", expected, act)
+	}
+}
+
+func TestBB_BelowUpper_True(t *testing.T) {
+	bb := &BB{
+		Mon:        Close1,
+		ValuePos:   Below,
+		Line:       Upper,
+		Period:     6,
+		Multiplier: 2,
+	}
+
+	klns1, klns2 := dummyKlines(6), dummyKlines(6)
+	for i := 0; i < 6; i++ {
+		klns1[i].Close = float64(i)
+	}
+
+	act, err := bb.Active(klns1, klns2)
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := true
+	if act != expected {
+		t.Errorf("expected %v as active, returned %v", expected, act)
+	}
+}
+
+func TestBB_BelowUpper_False(t *testing.T) {
+	bb := &BB{
+		Mon:        Close1,
+		ValuePos:   Below,
+		Line:       Upper,
+		Period:     6,
+		Multiplier: 2,
+	}
+
+	klns1, klns2 := dummyKlines(6), dummyKlines(6)
+	for i := 0; i < 6; i++ {
+		klns1[i].Close = float64(i)
+	}
+	klns1[5].Close = 25.0
+
+	act, err := bb.Active(klns1, klns2)
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := false
+	if act != expected {
+		t.Errorf("expected %v as active, returned %v", expected, act)
+	}
+}
