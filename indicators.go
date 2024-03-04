@@ -23,14 +23,6 @@ const (
 	Upper
 )
 
-type ClosingReason uint8
-
-const (
-	TakeProfit ClosingReason = iota
-	StopLoss
-	Expiry
-)
-
 type BB struct {
 	Mon        Monitor
 	ValuePos   ValuePos
