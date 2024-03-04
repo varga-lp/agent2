@@ -28,11 +28,11 @@ func NewTrade(pos *Position, cr ClosingReason, longClose klines.Kline, shortClos
 		CloseTime:    longClose.CloseTime,
 		Reason:       cr,
 		NetProfit:    pos.NetProfit(longClose, shortClose),
-		DurationSecs: (longClose.CloseTime - pos.Long.OpenTime) / 1_000,
+		DurationSecs: (longClose.CloseTime - pos.Long.CloseTime) / 1_000,
 	}, nil
 }
 
 func (tr *Trade) String() string {
-	return fmt.Sprintf("[trd] OT=%d, DSecs=%d, Net=%.2f, R=%s",
-		tr.OpenTime, tr.DurationSecs, tr.NetProfit, tr.Reason)
+	return fmt.Sprintf("[trd] OT=%d, CT=%d, DSecs=%d, Net=%.2f, R=%s",
+		tr.OpenTime, tr.CloseTime, tr.DurationSecs, tr.NetProfit, tr.Reason)
 }

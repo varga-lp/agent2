@@ -89,7 +89,7 @@ func TestNewTrade_String(t *testing.T) {
 		t.Errorf("expected nothing to be raised, raised %v", err)
 	}
 
-	expected := "[trd] OT=0, DSecs=10, Net=248.99, R=noReason"
+	expected := "[trd] OT=0, CT=10000, DSecs=10, Net=248.99, R=noReason"
 	if tr.String() != expected {
 		t.Errorf("string %s is not expected %s", tr.String(), expected)
 	}
