@@ -5,8 +5,8 @@ import "testing"
 func TestNewTrade_NilPos(t *testing.T) {
 	kln1, kln2 := dummyKlines(1)[0], dummyKlines(1)[0]
 
-	if _, err := NewTrade(nil, kln1, kln2); err != ErrPositionCantBeNil {
-		t.Errorf("expected %v to be raised, raised %v", ErrPositionCantBeNil, err)
+	if _, err := NewTrade(nil, kln1, kln2); err != ErrPositionCantBeNilForTrade {
+		t.Errorf("expected %v to be raised, raised %v", ErrPositionCantBeNilForTrade, err)
 	}
 }
 

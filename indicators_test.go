@@ -742,3 +742,21 @@ func Benchmark_RSI(b *testing.B) {
 		rsi.Active(benchmarkKlns, benchmarkKlns)
 	}
 }
+
+func Benchmark_BB_Period10(b *testing.B) {
+	bb := RandomBB()
+	bb.Period = 10
+
+	for i := 0; i < b.N; i++ {
+		bb.Active(benchmarkKlns, benchmarkKlns)
+	}
+}
+
+func Benchmark_RSI_Period10(b *testing.B) {
+	rsi := RandomRSI()
+	rsi.Period = 10
+
+	for i := 0; i < b.N; i++ {
+		rsi.Active(benchmarkKlns, benchmarkKlns)
+	}
+}

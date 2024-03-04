@@ -14,12 +14,12 @@ type Trade struct {
 }
 
 var (
-	ErrPositionCantBeNil = fmt.Errorf("position can't be nil when creating a trade")
+	ErrPositionCantBeNilForTrade = fmt.Errorf("position can't be nil when creating a trade")
 )
 
 func NewTrade(pos *Position, longClose klines.Kline, shortClose klines.Kline) (*Trade, error) {
 	if pos == nil {
-		return nil, ErrPositionCantBeNil
+		return nil, ErrPositionCantBeNilForTrade
 	}
 
 	return &Trade{
