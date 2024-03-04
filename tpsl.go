@@ -75,5 +75,4 @@ func (ts *TPSL) SLNetClose(pos *Position, closeLong klines.Kline, closeShort kli
 		return true, nil
 	}
 	return false, nil
-
 }
