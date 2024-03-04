@@ -26,6 +26,20 @@ const (
 	NoReason
 )
 
+func (cr ClosingReason) String() string {
+	switch cr {
+	case Expiry:
+		return "expiry"
+	case StopLoss:
+		return "stopLoss"
+	case TakeProfit:
+		return "takeProfit"
+	case NoReason:
+		return "noReason"
+	}
+	return ""
+}
+
 const (
 	maxBBCount  = 5
 	maxRSICount = 5
