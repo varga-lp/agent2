@@ -10,8 +10,6 @@ const (
 	commission = 0.000450
 )
 
-// position will record klns1 as Long, klns2 as Short
-// it will have methods to show realtime profit/loss
 const (
 	defaultAllocation = float64(1000.0)
 )
