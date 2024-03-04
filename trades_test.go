@@ -10,6 +10,17 @@ func TestNewTrade_NilPos(t *testing.T) {
 	}
 }
 
+func TestNewTrade_CloseTimeErr(t *testing.T) {
+	pos, _ := NewPosition(dummyKlines(1)[0], dummyKlines(1)[0])
+
+	longClose := dummyKlines(2)[1]
+	longClose.CloseTime = dummyKlines(1)[0].CloseTime - 1
+
+	if _, err := NewTrade(pos, NoReason, longClose, dummyKlines(2)[1]); err != ErrPositionCloseIsNotLTECloseTime {
+		t.Errorf("expected %v to be raised, raised %v", ErrPositionCloseIsNotLTECloseTime, err)
+	}
+}
+
 func TestNewTrade_OpenTime(t *testing.T) {
 	pos, _ := NewPosition(dummyKlines(1)[0], dummyKlines(1)[0])
 

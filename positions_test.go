@@ -195,24 +195,24 @@ func TestNetProfit_LongProfitShortLoss(t *testing.T) {
 	}
 }
 
-func TestExpired_True(t *testing.T) {
+func TestExpiredAt_True(t *testing.T) {
 	kln1O, kln2O := dummyKlines(1)[0], dummyKlines(1)[0]
 
 	kln1O.CloseTime = time.Now().UnixMilli() - 900
 	p, _ := NewPosition(kln1O, kln2O)
 
-	if !p.Expired(500) {
+	if !p.ExpiredAt(500, time.Now().UnixMilli()) {
 		t.Errorf("expected position to be expired but did not")
 	}
 }
 
-func TestExpired_False(t *testing.T) {
+func TestExpiredAt_False(t *testing.T) {
 	kln1O, kln2O := dummyKlines(1)[0], dummyKlines(1)[0]
 
 	kln1O.CloseTime = time.Now().UnixMilli() - 900
 	p, _ := NewPosition(kln1O, kln2O)
 
-	if p.Expired(1000) {
+	if p.ExpiredAt(1000, time.Now().UnixMilli()) {
 		t.Errorf("expected position not to be expired but did")
 	}
 }

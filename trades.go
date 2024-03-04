@@ -15,12 +15,16 @@ type Trade struct {
 }
 
 var (
-	ErrPositionCantBeNilForTrade = fmt.Errorf("position can't be nil when creating a trade")
+	ErrPositionCantBeNilForTrade      = fmt.Errorf("position can't be nil when creating a trade")
+	ErrPositionCloseIsNotLTECloseTime = fmt.Errorf("pos.Long.CloseTime should be less than equal to longClose.CloseTime")
 )
 
 func NewTrade(pos *Position, cr ClosingReason, longClose klines.Kline, shortClose klines.Kline) (*Trade, error) {
 	if pos == nil {
 		return nil, ErrPositionCantBeNilForTrade
+	}
+	if pos.Long.CloseTime > longClose.CloseTime {
+		return nil, ErrPositionCloseIsNotLTECloseTime
 	}
 
 	return &Trade{
