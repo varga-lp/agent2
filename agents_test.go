@@ -199,6 +199,7 @@ func TestClosePos_Expiry(t *testing.T) {
 	kln2C.Close = 1.0
 
 	kln1O.CloseTime = time.Now().UnixMilli() - 10_000
+	kln1C.CloseTime = time.Now().UnixMilli()
 
 	p, _ := NewPosition(kln1O, kln2O)
 	ag := RandomAgent()

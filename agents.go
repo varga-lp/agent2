@@ -3,7 +3,6 @@ package agent2
 import (
 	"fmt"
 	"sort"
-	"time"
 
 	"github.com/varga-lp/data/klines"
 )
@@ -155,7 +154,7 @@ func (ag *Agent) ClosePos(pos *Position, closeLong klines.Kline, closeShort klin
 		return true, TakeProfit, nil
 	}
 	// check expiry
-	if pos.ExpiredAt(ag.ExpiryMillis, time.Now().UnixMilli()) {
+	if pos.ExpiredAt(ag.ExpiryMillis, closeLong.CloseTime) {
 		return true, Expiry, nil
 	}
 	return false, NoReason, nil
