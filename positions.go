@@ -2,6 +2,7 @@ package agent2
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/varga-lp/data/klines"
 )
@@ -42,4 +43,8 @@ func (p *Position) NetProfit(long klines.Kline, short klines.Kline) float64 {
 	gp := p.GrossProfit(long, short)
 
 	return gp - (defaultAllocation*2+gp)*commission
+}
+
+func (p *Position) Expired(expiryMillis int64) bool {
+	return time.Now().UnixMilli() > (p.Long.CloseTime + expiryMillis)
 }
