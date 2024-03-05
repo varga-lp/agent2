@@ -24,11 +24,11 @@ const (
 )
 
 type BB struct {
-	Mon        Monitor
-	ValuePos   ValuePos
-	Line       BBLine
-	Period     int
-	Multiplier float64
+	Mon        Monitor  `json:"mon"`
+	ValuePos   ValuePos `json:"val_pos"`
+	Line       BBLine   `json:"line"`
+	Period     int      `json:"period"`
+	Multiplier float64  `json:"multiplier"`
 }
 
 const (
@@ -192,10 +192,10 @@ const (
 )
 
 type RSI struct {
-	Mon       Monitor
-	ValuePos  ValuePos
-	TargetVal float64
-	Period    int
+	Mon       Monitor  `json:"mon"`
+	ValuePos  ValuePos `json:"val_pos"`
+	TargetVal float64  `json:"target_val"`
+	Period    int      `json:"period"`
 }
 
 func randTargetVal() float64 {

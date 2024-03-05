@@ -1,9 +1,142 @@
 package agent2
 
 import (
+	"math/rand"
 	"testing"
 	"time"
 )
+
+func TestAgentMarshal_NoIndicators(t *testing.T) {
+	rand.Seed(0)
+
+	ag := &Agent{
+		Tpsl:         RandomTPSL(),
+		Backoff:      RandomBackoff(),
+		ExpiryMillis: randExpiry(),
+	}
+
+	pload, err := ag.Marshal()
+	if err != nil {
+		t.Errorf("expected no error but raised %v", err)
+	}
+
+	expected := `{"tpsl":{"tp":0.029,"sl":0.029},"backoff":{"mls":1020000},"expiry_mls":10380000,"bbs":null,"rsis":null}`
+
+	if string(pload) != expected {
+		t.Errorf("expected payload %s, received %s", expected, string(pload))
+	}
+}
+
+func TestAgentMarshal_WithIndicators(t *testing.T) {
+	rand.Seed(1)
+
+	ag := RandomAgent()
+	pload, _ := ag.Marshal()
+
+	expected := `{"tpsl":{"tp":0.028,"sl":0.02},"backoff":{"mls":390000},"expiry_mls":16560000,"bbs":[{"mon":14,"val_pos":0,"line":2,"period":98,"multiplier":2.61},{"mon":8,"val_pos":1,"line":2,"period":105,"multiplier":2.1239},{"mon":11,"val_pos":1,"line":2,"period":146,"multiplier":1.8541}],"rsis":[{"mon":8,"val_pos":0,"target_val":69,"period":13},{"mon":2,"val_pos":1,"target_val":66,"period":55},{"mon":14,"val_pos":0,"target_val":69,"period":89},{"mon":9,"val_pos":0,"target_val":53,"period":113}]}`
+
+	if string(pload) != expected {
+		t.Errorf("expected payload %s, received %s", expected, string(pload))
+	}
+}
+
+func TestUnmarshalAgent_WithDummyPayload(t *testing.T) {
+	pload := []byte("dummy")
+
+	_, err := UnmarshalAgent(pload)
+	if err == nil {
+		t.Errorf("expected error but nothing raised")
+	}
+}
+
+func TestUnmarshalAgent_Tpsl(t *testing.T) {
+	ag := RandomAgent()
+	pload, _ := ag.Marshal()
+
+	ag2, _ := UnmarshalAgent(pload)
+	if ag2.Tpsl.TakeProfit != ag.Tpsl.TakeProfit {
+		t.Errorf("take profits does not match")
+	}
+	if ag2.Tpsl.StopLoss != ag.Tpsl.StopLoss {
+		t.Errorf("stop losses does not match")
+	}
+}
+
+func TestUnmarshalAgent_Backoff(t *testing.T) {
+	ag := RandomAgent()
+	pload, _ := ag.Marshal()
+
+	ag2, _ := UnmarshalAgent(pload)
+	if ag2.Backoff.DurationMillis != ag.Backoff.DurationMillis {
+		t.Errorf("backoffs does not match")
+	}
+}
+
+func TestUnmarshalAgent_ExpiryMillis(t *testing.T) {
+	ag := RandomAgent()
+	pload, _ := ag.Marshal()
+
+	ag2, _ := UnmarshalAgent(pload)
+	if ag2.ExpiryMillis != ag.ExpiryMillis {
+		t.Errorf("expiry millis does not match")
+	}
+}
+
+func TestUnmarshalAgent_IndicatorLens(t *testing.T) {
+	ag := RandomAgent()
+	pload, _ := ag.Marshal()
+
+	ag2, _ := UnmarshalAgent(pload)
+	if len(ag.Bbs) != len(ag2.Bbs) {
+		t.Errorf("bb lens does not match")
+	}
+	if len(ag.Rsis) != len(ag2.Rsis) {
+		t.Errorf("rsis lens does not match")
+	}
+}
+
+func TestUnmarshalAgent_FirstBB(t *testing.T) {
+	ag := RandomAgent()
+	pload, _ := ag.Marshal()
+
+	ag2, _ := UnmarshalAgent(pload)
+
+	if ag2.Bbs[0].Mon != ag.Bbs[0].Mon {
+		t.Errorf("first bb mons does not match")
+	}
+	if ag2.Bbs[0].ValuePos != ag.Bbs[0].ValuePos {
+		t.Errorf("first bb value posses does not match")
+	}
+	if ag2.Bbs[0].Line != ag.Bbs[0].Line {
+		t.Errorf("first bb lines does not match")
+	}
+	if ag2.Bbs[0].Period != ag.Bbs[0].Period {
+		t.Errorf("first bb periods does not match")
+	}
+	if ag2.Bbs[0].Multiplier != ag.Bbs[0].Multiplier {
+		t.Errorf("first bb multipliers does not match")
+	}
+}
+
+func TestUnmarshalAgent_FirstRSI(t *testing.T) {
+	ag := RandomAgent()
+	pload, _ := ag.Marshal()
+
+	ag2, _ := UnmarshalAgent(pload)
+
+	if ag2.Rsis[0].Mon != ag.Rsis[0].Mon {
+		t.Errorf("first rsi mons does not match")
+	}
+	if ag2.Rsis[0].ValuePos != ag.Rsis[0].ValuePos {
+		t.Errorf("first rsi value posses does not match")
+	}
+	if ag2.Rsis[0].TargetVal != ag.Rsis[0].TargetVal {
+		t.Errorf("first rsi target vals does not match")
+	}
+	if ag2.Rsis[0].Period != ag.Rsis[0].Period {
+		t.Errorf("first rsi periods does not match")
+	}
+}
 
 func TestRandomAgent_BBLen(t *testing.T) {
 	for i := 0; i < 10_000; i++ {

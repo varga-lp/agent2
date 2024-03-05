@@ -1,6 +1,7 @@
 package agent2
 
 import (
+	"encoding/json"
 	"fmt"
 	"sort"
 
@@ -46,12 +47,28 @@ const (
 )
 
 type Agent struct {
-	Tpsl         *TPSL
-	Backoff      *Backoff
-	ExpiryMillis int64
+	Tpsl         *TPSL    `json:"tpsl"`
+	Backoff      *Backoff `json:"backoff"`
+	ExpiryMillis int64    `json:"expiry_mls"`
+	Bbs          []*BB    `json:"bbs"`
+	Rsis         []*RSI   `json:"rsis"`
+}
 
-	Bbs  []*BB
-	Rsis []*RSI
+func (ag *Agent) Marshal() ([]byte, error) {
+	pload, err := json.Marshal(ag)
+	if err != nil {
+		return nil, err
+	}
+	return pload, nil
+}
+
+func UnmarshalAgent(pload []byte) (*Agent, error) {
+	var agent Agent
+
+	if err := json.Unmarshal(pload, &agent); err != nil {
+		return nil, err
+	}
+	return &agent, nil
 }
 
 func RandomAgent() *Agent {

@@ -9,8 +9,8 @@ import (
 )
 
 type TPSL struct {
-	TakeProfit float64
-	StopLoss   float64
+	TakeProfit float64 `json:"tp"`
+	StopLoss   float64 `json:"sl"`
 }
 
 const (

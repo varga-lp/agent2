@@ -6,7 +6,7 @@ import (
 )
 
 type Backoff struct {
-	DurationMillis int64
+	DurationMillis int64 `json:"mls"`
 }
 
 const (
