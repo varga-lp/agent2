@@ -19,7 +19,7 @@ func TestRandTreshold_SingleIteration(t *testing.T) {
 	rand.Seed(0)
 
 	r := randTreshold()
-	expected := 0.0290
+	expected := 0.0145
 
 	if r != expected {
 		t.Errorf("treshold %.4f is not equal to expected treshold %.4f", r, expected)
@@ -48,10 +48,10 @@ func TestRandomTPSL_SingleIteration(t *testing.T) {
 
 	tpsl := RandomTPSL()
 
-	if tpsl.TakeProfit != 0.0280 {
+	if tpsl.TakeProfit != 0.0145 {
 		t.Errorf("unexpected tp %.4f", tpsl.TakeProfit)
 	}
-	if tpsl.StopLoss != 0.0200 {
+	if tpsl.StopLoss != 0.0105 {
 		t.Errorf("unexpected sl %.4f", tpsl.StopLoss)
 	}
 }

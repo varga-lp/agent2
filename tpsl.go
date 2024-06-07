@@ -14,9 +14,9 @@ type TPSL struct {
 }
 
 const (
-	maxTPSL  = float64(0.03)  // %3.0
-	minTPSL  = float64(0.004) // %0.4
-	tpSLStep = float64(0.001) // %0.1
+	maxTPSL  = float64(0.015)  // %1.5
+	minTPSL  = float64(0.004)  // %0.4
+	tpSLStep = float64(0.0005) // %0.05
 )
 
 func randTreshold() float64 {

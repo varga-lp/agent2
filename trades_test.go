@@ -186,9 +186,9 @@ func TestBucket_HitRatio_WithTrades(t *testing.T) {
 	bu.Trades = append(bu.Trades, &Trade{NetProfit: 0.5})
 	bu.Trades = append(bu.Trades, &Trade{NetProfit: 0.8})
 
-	expected := 0.6666
+	expected := 0.6667
 	if bu.HitRatio() != expected {
-		t.Errorf("unexpected hit ratio")
+		t.Errorf("unexpected hit ratio %.4f", bu.HitRatio())
 	}
 }
 
