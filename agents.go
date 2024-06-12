@@ -171,7 +171,7 @@ func (ag *Agent) ClosePos(pos *Position, closeLong klines.Kline, closeShort klin
 		return true, TakeProfit, nil
 	}
 	// check expiry
-	if pos.ExpiredAt(ag.ExpiryMillis, closeLong.CloseTime) {
+	if pos.ExpiredAt(ag.ExpiryMillis, closeLong.CloseTime) && pos.NetProfit(closeLong, closeShort) >= 0.0 {
 		return true, Expiry, nil
 	}
 	return false, NoReason, nil

@@ -14,8 +14,8 @@ type TPSL struct {
 }
 
 const (
-	maxTPSL  = float64(0.015)  // %1.5
-	minTPSL  = float64(0.004)  // %0.4
+	maxTPSL  = float64(0.030)  // %1.5
+	minTPSL  = float64(0.010)  // %0.4
 	tpSLStep = float64(0.0005) // %0.05
 )
 
