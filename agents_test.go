@@ -27,18 +27,18 @@ func TestAgentMarshal_NoIndicators(t *testing.T) {
 	}
 }
 
-// func TestAgentMarshal_WithIndicators(t *testing.T) {
-// 	rand.Seed(1)
+func TestAgentMarshal_WithIndicators(t *testing.T) {
+	rand.Seed(1)
 
-// 	ag := RandomAgent()
-// 	pload, _ := ag.Marshal()
+	ag := RandomAgent()
+	pload, _ := ag.Marshal()
 
-// 	expected := `{"tpsl":{"tp":0.028,"sl":0.02},"backoff":{"mls":390000},"expiry_mls":16560000,"bbs":[{"mon":14,"val_pos":0,"line":2,"period":98,"multiplier":2.61},{"mon":8,"val_pos":1,"line":2,"period":105,"multiplier":2.1239},{"mon":11,"val_pos":1,"line":2,"period":146,"multiplier":1.8541}],"rsis":[{"mon":8,"val_pos":0,"target_val":69,"period":13},{"mon":2,"val_pos":1,"target_val":66,"period":55},{"mon":14,"val_pos":0,"target_val":69,"period":89},{"mon":9,"val_pos":0,"target_val":53,"period":113}]}`
+	expected := `{"tpsl":{"tp":0.029,"sl":0.022},"backoff":{"mls":390000},"expiry_mls":16560000,"bbs":[{"mon":14,"val_pos":0,"line":2,"period":98,"multiplier":2.61},{"mon":8,"val_pos":1,"line":2,"period":105,"multiplier":2.1239},{"mon":11,"val_pos":1,"line":2,"period":146,"multiplier":1.8541}],"rsis":[{"mon":8,"val_pos":0,"target_val":69,"period":13},{"mon":2,"val_pos":1,"target_val":66,"period":55},{"mon":14,"val_pos":0,"target_val":69,"period":89},{"mon":9,"val_pos":0,"target_val":53,"period":113}]}`
 
-// 	if string(pload) != expected {
-// 		t.Errorf("expected payload %s, received %s", expected, string(pload))
-// 	}
-// }
+	if string(pload) != expected {
+		t.Errorf("expected payload %s, received %s", expected, string(pload))
+	}
+}
 
 func TestUnmarshalAgent_WithDummyPayload(t *testing.T) {
 	pload := []byte("dummy")
