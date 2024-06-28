@@ -44,6 +44,9 @@ func (cr ClosingReason) String() string {
 const (
 	maxBBCount  = 5
 	maxRSICount = 5
+
+	minBBCount  = 2
+	minRSICount = 2
 )
 
 type Agent struct {
@@ -82,7 +85,7 @@ func RandomAgent() *Agent {
 		Rsis:         make([]*RSI, 0, maxRSICount),
 	}
 
-	for i := 0; i < maxBBCount; i++ {
+	for i := minBBCount; i < maxBBCount; i++ {
 		bb := RandomBB()
 
 		if _, ok := bbMons[bb.Mon]; !ok {
@@ -91,7 +94,7 @@ func RandomAgent() *Agent {
 			ag.Bbs = append(ag.Bbs, bb)
 		}
 	}
-	for i := 0; i < maxRSICount; i++ {
+	for i := minRSICount; i < maxRSICount; i++ {
 		rsi := RandomRSI()
 
 		if _, ok := rsiMons[rsi.Mon]; !ok {

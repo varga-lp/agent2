@@ -252,5 +252,4 @@ func (rsi *RSI) Active(klns1 []klines.Kline, klns2 []klines.Kline) (bool, error)
 	default:
 		return false, fmt.Errorf("valuePos %v is not defined", rsi.ValuePos)
 	}
-	return false, nil
 }

@@ -34,7 +34,7 @@ var (
 )
 
 const (
-	secondaryMonProb = 10
+	secondaryMonProb = 25
 )
 
 func randPrimaryMon() Monitor {

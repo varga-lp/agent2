@@ -33,7 +33,7 @@ func TestAgentMarshal_WithIndicators(t *testing.T) {
 	ag := RandomAgent()
 	pload, _ := ag.Marshal()
 
-	expected := `{"tpsl":{"tp":0.029,"sl":0.022},"backoff":{"mls":390000},"expiry_mls":16560000,"bbs":[{"mon":14,"val_pos":0,"line":2,"period":98,"multiplier":2.61},{"mon":8,"val_pos":1,"line":2,"period":105,"multiplier":2.1239},{"mon":11,"val_pos":1,"line":2,"period":146,"multiplier":1.8541}],"rsis":[{"mon":8,"val_pos":0,"target_val":69,"period":13},{"mon":2,"val_pos":1,"target_val":66,"period":55},{"mon":14,"val_pos":0,"target_val":69,"period":89},{"mon":9,"val_pos":0,"target_val":53,"period":113}]}`
+	expected := `{"tpsl":{"tp":0.029,"sl":0.022},"backoff":{"mls":390000},"expiry_mls":16560000,"bbs":[{"mon":14,"val_pos":0,"line":2,"period":98,"multiplier":2.61},{"mon":6,"val_pos":1,"line":2,"period":105,"multiplier":2.1239},{"mon":11,"val_pos":1,"line":2,"period":146,"multiplier":1.8541}],"rsis":[{"mon":14,"val_pos":1,"target_val":31,"period":67},{"mon":11,"val_pos":1,"target_val":12,"period":137}]}`
 
 	if string(pload) != expected {
 		t.Errorf("expected payload %s, received %s", expected, string(pload))
