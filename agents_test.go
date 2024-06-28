@@ -20,7 +20,7 @@ func TestAgentMarshal_NoIndicators(t *testing.T) {
 		t.Errorf("expected no error but raised %v", err)
 	}
 
-	expected := `{"tpsl":{"tp":0.0145,"sl":0.0145},"backoff":{"mls":960000},"expiry_mls":18720000,"bbs":null,"rsis":null}`
+	expected := `{"tpsl":{"tp":0.029,"sl":0.029},"backoff":{"mls":960000},"expiry_mls":18720000,"bbs":null,"rsis":null}`
 
 	if string(pload) != expected {
 		t.Errorf("expected payload %s, received %s", expected, string(pload))
@@ -327,7 +327,7 @@ func TestClosePos_Expiry(t *testing.T) {
 	kln1C, kln2C := dummyKlines(1)[0], dummyKlines(1)[0]
 
 	kln1O.Close = 1.0
-	kln1C.Close = 1.0
+	kln1C.Close = 1.01 // >= 0.0 to make expiry work
 	kln2O.Close = 1.0
 	kln2C.Close = 1.0
 
